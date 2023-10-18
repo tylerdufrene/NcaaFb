@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Tyler Dufrene/Documents/TylerDufrene/Data Science/sports_data/ncaafb/sports_reference.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="26445"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,15:mainncaaf_all_teams"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">select gs.*
+, gst.home_points
+, gst.away_points
+, case when gst.home_points &gt; gst.away_points then gs.home_team else gs.away_team end as winner
+from ncaaf_game_schedule gs 
+join ncaaf_game_stats gst on gst.id = gs.id
+;
+
+select *
+from ncaaf_game_stats_by_team
+where team_team = 'LSU'
+and season=2023;
+
+select min(season)
+from ncaaf_game_stats;
+
+
+select 
+team_team, 
+team_id, 
+week_num,
+id,
+team_yardsPerRushAttempt, 
+team_yardsPerPass, 
+team_turnovers,
+team_totalYards, 
+team_totalPenaltiesYards, 
+team_totalFumbles,
+       team_thirdDownEff, 
+	   team_rushingYards, 
+	   team_rushingTDs,
+       team_rushingAttempts, 
+	   team_possessionTime, 
+	   team_points,
+       team_passingTDs, 
+	   team_passesIntercepted, 
+	   team_netPassingYards,
+       team_kickingPoints, 
+	   team_kickReturns, 
+	   team_kickReturnYards,
+       team_kickReturnTDs, 
+	   team_interceptions, 
+	   team_interceptionYards,
+       team_interceptionTDs, 
+	   team_fumblesRecovered, 
+	   team_fumblesLost,
+       team_fourthDownEff, 
+	   team_firstDowns, 
+	   team_conference,
+       team_completionAttempts, 
+	   team_tacklesForLoss, 
+	   team_tackles,
+       team_sacks, 
+	   team_qbHurries, 
+	   team_puntReturns,
+       team_puntReturnYards, 
+	   team_puntReturnTDs, 
+	   team_passesDeflected,
+       team_defensiveTDs, 
+	   team_total_penalties, 
+	   team_total_penalty_yards,
+       team_yards_per_penalty, 
+	   team_completions,
+       team_completions_attempted, 
+	   team_completion_percent,
+       opponent_yardsPerRushAttempt,
+	   opponent_yardsPerPass,
+       opponent_turnovers, 
+	   opponent_totalYards,
+       opponent_totalPenaltiesYards, 
+	   opponent_totalFumbles,
+       opponent_thirdDownEff, 
+	   opponent_team, 
+	   opponent_rushingYards,
+       opponent_rushingTDs, 
+	   opponent_rushingAttempts,
+       opponent_puntReturns, 
+	   opponent_puntReturnYards,
+       opponent_puntReturnTDs, 
+	   opponent_possessionTime, 
+	   opponent_points,
+       opponent_passingTDs, 
+	   opponent_passesIntercepted,
+       opponent_netPassingYards, 
+	   opponent_kickingPoints,
+       opponent_kickReturns, 
+	   opponent_kickReturnYards,
+       opponent_kickReturnTDs, 
+	   opponent_interceptions,
+       opponent_interceptionYards, 
+	   opponent_interceptionTDs, 
+	   opponent_id,
+       opponent_fumblesRecovered, 
+	   opponent_fumblesLost,
+       opponent_fourthDownEff, 
+	   opponent_firstDowns, 
+	   opponent_conference,
+       opponent_completionAttempts, 
+	   opponent_tacklesForLoss,
+       opponent_tackles, 
+	   opponent_sacks, 
+	   opponent_qbHurries,
+       opponent_passesDeflected, 
+	   opponent_defensiveTDs,
+       opponent_total_penalties, 
+	   opponent_total_penalty_yards,
+       opponent_yards_per_penalty, 
+	   opponent_completions,
+       opponent_completions_attempted, 
+	   opponent_completion_percent
+from ncaaf_game_stats_by_team
+limit 10;
+
+
+select gs.*
+, gst.home_points
+, gst.away_points
+, case when gst.home_points &gt; gst.away_points then gs.home_team else gs.away_team end as winner
+from ncaaf_game_schedule gs 
+join ncaaf_game_stats gst on gst.id = gs.id
+;
+
+select *
+from ncaaf_game_stats_by_team
+where team_team = 'LSU'
+and season=2023;
+
+
+select 
+team_team, 
+team_id,
+season,  
+week_num,
+id,
+lag(team_yardsPerRushAttempt,1,0) over (partition by team_id,season order by id) as team_yardsPerRushAttempt_season, 
+lag(team_yardsPerPass,1,0) over (partition by team_id,season order by id) as team_yardsPerPass, 
+lag(team_turnovers,1,0) over (partition by team_id,season order by id) as team_turnovers, 
+lag(team_totalYards,1,0) over (partition by team_id,season order by id) as team_totalYards, 
+lag(team_totalFumbles,1,0) over (partition by team_id,season order by id) as team_totalFumbles, 
+lag(team_rushingTDs,1,0) over (partition by team_id,season order by id) as team_rushingTDs
+
+
+from ncaaf_game_stats_by_team
+where team_team = 'LSU'
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
