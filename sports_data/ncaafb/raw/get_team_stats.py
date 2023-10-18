@@ -18,7 +18,7 @@ configuration.api_key['Authorization'] = config.get_constants('API_KEY')
 
 api_instance = cfbd.StatsApi(cfbd.ApiClient(configuration))
 
-conn = sqlite3.connect('sports_reference.db')
+conn = sqlite3.connect(r'C:\Users\Tyler Dufrene\Documents\TylerDufrene\Data Science\sports_data\sports_reference.db')
 
 teams = pd.read_sql_query("""
                           select school from ncaaf_all_teams 

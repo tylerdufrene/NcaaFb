@@ -15,11 +15,12 @@ from raw.get_games import get_game_schedule
 from raw.get_game_stats import get_game_stats
 from agg.format_game_stats import format_game_stats
 from agg.season_summary import get_home_and_away_stats
+from agg.season_summary_agg import base_lead_table, avg_season_stats, get_full_season_avgs_by_week
 
 format_game_stats = format_game_stats
 
 
-conn = sqlite3.connect(r'C:\Users\Tyler Dufrene\Documents\TylerDufrene\Data Science\sports_data\ncaafb\sports_reference.db')
+conn = sqlite3.connect(r'C:\Users\Tyler Dufrene\Documents\TylerDufrene\Data Science\sports_data\sports_reference.db')
 cursor = conn.cursor()
 
 def query_db(table,year=None,week=None):
@@ -50,17 +51,17 @@ def delete_statement(table, year=None, week=None):
     if week:
         return f'''
             DELETE FROM {table}
-            where year = {year}
-            and week={week}
+            where season = {year}
+            and week_num={week}
             '''
     elif year:
                 return f'''
             DELETE FROM {table}
-            where year = {year}
+            where season = {year}
             '''
     else:
         return f'''
-                DELETE * FROM {table}
+                DROP TABLE IF EXISTS {table}
                 '''
 
 def all_teams_to_db():
@@ -73,9 +74,9 @@ def data_exists(table, year=None, week=None):
     table_exists = False
     try:
         if week:
-            q = pd.read_sql_query(f'select * from {table} where year={year} and week={week} limit 10', conn)
+            q = pd.read_sql_query(f'select * from {table} where season={year} and week_num={week} limit 10', conn)
         else:
-            q = pd.read_sql_query(f'select * from {table} where year={year} limit 10',conn)
+            q = pd.read_sql_query(f'select * from {table} where season={year} limit 10',conn)
         if len(q) > 1:
             table_exists = True 
     except:
@@ -94,7 +95,7 @@ def game_schedule_2_db(year=datetime.now().year, week=None):
     get_game_schedule(year,week).to_sql('ncaaf_game_schedule',if_exists='append',index=False,con=conn)
     
  
-def general_stats_2_db(fn, table,year=datetime.now().year, week=None):
+def general_stats_2_db(fn, table,year=datetime.now().year, week=None, partition=0):
     if data_exists(table,year,week):
         cursor.execute(delete_statement(table,year,week))
     fn(year,week).to_sql(table,if_exists='append',index=False,con=conn)
@@ -127,16 +128,31 @@ def run_db(fn, table, year=None, week=None):
             
 ## Materializing the lower level functions
 
-def format_game_stats_2_db(year,week=None):
-    run_db(format_game_stats,'ncaaf_game_stats_formatted', year, week)
     
 # First year for this data is 2004
 def game_stats_2_db(year, week=None):
     run_db(get_game_stats, 'ncaaf_game_stats',year,week)
 
+def format_game_stats_2_db(year,week=None):
+    run_db(format_game_stats,'ncaaf_game_stats_formatted', year, week)
+
 def team_game_stats_2_db(year, week=None):
     run_db(get_home_and_away_stats, 'ncaaf_game_stats_by_team', year,week)
-    
+
+def team_season_summary_2_db(year):
+    general_stats_2_db(base_lead_table,'ncaaf_team_season_stats', year)
+
+def avg_season_summary_2_db(year, partition=None):
+    general_stats_2_db(avg_season_stats,'ncaaf_avg_season_stats_by_team', year,partition=partition)
+
+def avg_last_3_games_2_db(year, partition=4):
+    general_stats_2_db(avg_season_stats, 'ncaaf_avg3_season_stats_by_team', year, partition=partition)
+
+def avg_last_5_games_2_db(year, partition=6):
+    general_stats_2_db(avg_season_stats, 'ncaaf_avg5_season_stats_by_team', year, partition=partition)
+
+def avg_full_season_total(table):
+    get_full_season_avgs_by_week(table).to_sql(table+'_total',if_exists='append',index=False,con=conn)
 
 def create_game_summary_table():
     cursor.execute('DROP TABLE IF EXISTS ncaaf_game_summary;')
