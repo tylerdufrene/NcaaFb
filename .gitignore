@@ -1,9 +1,0 @@
-*.db
-sports_data/sports_reference.db
-sports_data/ncaafb/utilities/config.py
-sports_data/ncaafb/utilities/constants.py
-sports_data/ncaafb/utilities/config.py
-sports_data/ncaafb/utilities/constants.
-sports_data/agg
-sports_data/raw
-sports_data/utilities
