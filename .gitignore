@@ -1,5 +1,6 @@
 *.db
-ncaafb/utilities/config.py
-ncaafb/utilities/constants.py*.db
-ncaafb/utilities/config.py
-ncaafb/utilities/constants.py
+sports_data/sports_reference.db
+sports_data/ncaafb/utilities/config.py
+sports_data/ncaafb/utilities/constants.py
+sports_data/ncaafb/utilities/config.py
+sports_data/ncaafb/utilities/constants.py
