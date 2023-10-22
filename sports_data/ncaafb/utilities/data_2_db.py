@@ -13,6 +13,7 @@ from raw.get_teams2 import get_all_teams
 from raw.get_season_schedule import get_calendar
 from raw.get_games import get_game_schedule
 from raw.get_game_stats import get_game_stats
+from raw.get_odds_data import get_odds
 from agg.format_game_stats import format_game_stats
 from agg.season_summary import get_home_and_away_stats
 from agg.season_summary_agg import base_lead_table, avg_season_stats, get_full_season_avgs_by_week
@@ -89,11 +90,6 @@ def calendar_2_db(year=datetime.now().year):
         cursor.execute(delete_statement('ncaaf_season_calendar',year))
     get_calendar(year).to_sql('ncaaf_season_calendar', if_exists='append',index=False, con=conn)
     
-def game_schedule_2_db(year=datetime.now().year, week=None):
-    if data_exists('ncaaf_game_schedule',year,week):
-        cursor.execute(delete_statement('ncaaf_game_schedule',year,week))
-    get_game_schedule(year,week).to_sql('ncaaf_game_schedule',if_exists='append',index=False,con=conn)
-    
  
 def general_stats_2_db(fn, table,year=datetime.now().year, week=None, partition=0):
     if data_exists(table,year,week):
@@ -128,6 +124,11 @@ def run_db(fn, table, year=None, week=None):
             
 ## Materializing the lower level functions
 
+def game_schedule_2_db(year=datetime.now().year, week=None):
+    if data_exists('ncaaf_game_schedule',year,week):
+        cursor.execute(delete_statement('ncaaf_game_schedule',year,week))
+    run_db(get_game_schedule, 'ncaaf_game_schedule', year,week)
+    
     
 # First year for this data is 2004
 def game_stats_2_db(year, week=None):
@@ -152,7 +153,10 @@ def avg_last_5_games_2_db(year, partition=6):
     general_stats_2_db(avg_season_stats, 'ncaaf_avg5_season_stats_by_team', year, partition=partition)
 
 def avg_full_season_total(table):
-    get_full_season_avgs_by_week(table).to_sql(table+'_total',if_exists='append',index=False,con=conn)
+    get_full_season_avgs_by_week(table).drop_duplicates().to_sql(table+'_total',if_exists='replace',index=False,con=conn)
+    
+def odds_data_2_db(year,week=None):
+    run_db(get_odds, 'ncaaf_betting_lines', year,week)
 
 def create_game_summary_table():
     cursor.execute('DROP TABLE IF EXISTS ncaaf_game_summary;')
@@ -167,3 +171,5 @@ def create_game_summary_table():
             join ncaaf_game_stats gst on gst.id = gs.id
         '''
     )
+    
+    

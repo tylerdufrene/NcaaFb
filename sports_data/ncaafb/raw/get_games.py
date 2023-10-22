@@ -21,11 +21,11 @@ api_instance = cfbd.GamesApi(cfbd.ApiClient(configuration))
 def get_game_schedule(year=datetime.now().year,week=None):
     df = pd.DataFrame()
     try:
-        games = api_instance.get_games(year=year,week=week)
+        games = api_instance.get_lines(year=year,week=week)
         for g in games:
             game_dict = {}
-            game_dict['week'] = g.__getattribute__('week')
-            game_dict['year'] = g.__getattribute__('season')
+            game_dict['week_num'] = g.__getattribute__('week')
+            game_dict['season'] = g.__getattribute__('season')
             game_dict['season_type'] = g.__getattribute__('season_type')
             game_dict['home_team'] = g.__getattribute__('home_team')
             game_dict['away_team'] = g.__getattribute__('away_team')
