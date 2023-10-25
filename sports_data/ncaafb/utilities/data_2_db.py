@@ -14,6 +14,9 @@ from raw.get_season_schedule import get_calendar
 from raw.get_games import get_game_schedule
 from raw.get_game_stats import get_game_stats
 from raw.get_odds_data import get_odds
+from raw.get_talent_score import get_talent_score
+from raw.get_ratings import get_elo_ratings, get_fpi_ratings
+from raw.get_win_prob import get_win_prob
 from agg.format_game_stats import format_game_stats
 from agg.season_summary import get_home_and_away_stats
 from agg.season_summary_agg import base_lead_table, avg_season_stats, get_full_season_avgs_by_week
@@ -157,6 +160,18 @@ def avg_full_season_total(table):
     
 def odds_data_2_db(year,week=None):
     run_db(get_odds, 'ncaaf_betting_lines', year,week)
+    
+def team_talent_2_db(year):
+    general_stats_2_db(get_talent_score, 'ncaaf_team_talent_score', year)
+    
+def elo_score_2_db(year):
+    general_stats_2_db(get_elo_ratings, 'ncaaf_ratings_elo_score',year)
+    
+def fpi_score_2_db(year):
+    general_stats_2_db(get_fpi_ratings, 'ncaaf_ratings_fpi_score', year)
+    
+def win_prob_2_db(year,week=None):
+    run_db(get_win_prob, 'ncaaf_metrics_win_prob', year, week)
 
 def create_game_summary_table():
     cursor.execute('DROP TABLE IF EXISTS ncaaf_game_summary;')
