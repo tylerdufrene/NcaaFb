@@ -15,7 +15,7 @@ columns = [i.strip() for i in columns]
 
 grouped_cols = ['team_team','team_id','team_conference','season','week_num','id']
 rem_columns = [col for col in columns if col not in grouped_cols]
-lag_prefix = [f'lag({col},1,0) over (partition by team_id, season order by id) as {col}'
+lag_prefix = [f'lag({col},1,0) over (partition by team_id, season order by season,week_num) as {col}'
               for col in rem_columns]
 
 

@@ -51,7 +51,4 @@ left join ncaaf_ratings_fpi_score f_a on f_a.team = gs.away_team and f_a.season 
 left join ncaaf_team_talent_score tt on tt.team = gs.home_team and tt.season = 2023
 left join ncaaf_team_talent_score tt2 on tt2.team = gs.away_team and tt2.season = 2023
 where gs.season = 2023
-and gs.id in (401520348,
-401520347
-)
-and gs.week_num = 9;
+and gs.week_num = 10;

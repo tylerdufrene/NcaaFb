@@ -173,6 +173,24 @@ def fpi_score_2_db(year):
 def win_prob_2_db(year,week=None):
     run_db(get_win_prob, 'ncaaf_metrics_win_prob', year, week)
 
+def weekly_run(year,week):
+    game_stats_2_db(year,week)
+    create_game_summary_table()
+    format_game_stats_2_db(year,week)
+    team_game_stats_2_db(year,week)
+    team_season_summary_2_db(year)
+    avg_season_summary_2_db(year)
+    avg_last_3_games_2_db(year)
+    avg_last_5_games_2_db(year)
+    avg_full_season_total('ncaaf_avg_season_stats_by_team')
+    avg_full_season_total('ncaaf_avg3_season_stats_by_team')
+    avg_full_season_total('ncaaf_avg5_season_stats_by_team')
+    odds_data_2_db(year,week)
+    team_talent_2_db(year)
+    elo_score_2_db(year)
+    fpi_score_2_db(year)
+    win_prob_2_db(year)
+
 def create_game_summary_table():
     cursor.execute('DROP TABLE IF EXISTS ncaaf_game_summary;')
     cursor.execute(

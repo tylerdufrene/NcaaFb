@@ -24,11 +24,39 @@ def get_team_season_stats(team,season):
     df['Team'] = team
     return df 
 
+def get_team_season_adv_stats(team,season):
+    cols = ['G', 'Date', 'Home_Away', 'Opp_team', 'W/L', 'Tm', 'Opp_points', 'ORtg',
+       'DRtg', 'Pace', 'FTr', '3PAr', 'TS%', 'TRB%', 'AST%', 'STL%', 'BLK%',
+       'blank1', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA',
+       'blank2', 'opp_eFG%', 'opp_TOV%', 'opp_DRB%', 'opp_FT/FGA']
+    df = pd.read_html(f'https://www.sports-reference.com/cbb/schools/{team}/men/{season}-gamelogs-advanced.html')[0]
+    df = df.droplevel(0,axis=1)
+    df.columns = cols 
+    df = df.drop(['blank1','blank2'],axis=1)
+    df['Home_Away'] = df.Home_Away.apply(lambda s: 'N' if s =='N'
+                                         else 'A' if s == '@' else 'H')
+    df = df[(~df['G'].isna())&(df['G']!='G')]
+    df['Win'] = df['W/L'].apply(lambda w: str(w).__contains__('W'))
+    df['Season'] = season 
+    df['Team'] = team
+    return df 
+
 def get_all_teams_season(season):
     all_stats = pd.DataFrame()
     for tl in teams.loc[:,'TeamLookup']:
         try:
             df = get_team_season_stats(tl,season)
+            all_stats = pd.concat([all_stats,df])
+        except:
+            print('Error getting',tl)
+        time.sleep(5)
+    return all_stats
+
+def get_all_games_advanced(season):
+    all_stats = pd.DataFrame()
+    for tl in teams.loc[:,'TeamLookup']:
+        try:
+            df = get_team_season_adv_stats(tl,season)
             all_stats = pd.concat([all_stats,df])
         except:
             print('Error getting',tl)
