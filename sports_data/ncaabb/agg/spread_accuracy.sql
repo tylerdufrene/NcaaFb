@@ -29,7 +29,7 @@ case when c.away_ml < 0 and (p.t2pts - p.t1pts) < c.spread then a.away || ' Cove
 	 end as spreadOutcome,
 case when home_ml < away_ml and (a.game_score_home - a.game_score_away)> 0 then abs(round((a.game_score_home - a.game_score_away) - abs(c.spread)))
 	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) < 0 then abs(round(abs((a.game_score_home - a.game_score_away)) - abs(c.spread)))
-	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) > 0 then abs(round((a.game_score_home - a.game_score_away) - c.spread)) 
+	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) > 0 then abs(round((a.game_score_home - a.game_score_away) - c.spread))
 	 when home_ml < away_ml and (a.game_score_home - a.game_score_away) < 0 then abs(round(abs((a.game_score_home - a.game_score_away)) - c.spread)) end
 	 as spread_diff,
 round((a.game_score_home - a.game_score_away),2) as pred_total,
@@ -83,7 +83,7 @@ case
 	 end as spreadOutcome,
 case when home_ml < away_ml and (a.game_score_home - a.game_score_away)> 0 then abs(round((a.game_score_home - a.game_score_away) - abs(c.spread)))
 	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) < 0 then abs(round(abs((a.game_score_home - a.game_score_away)) - abs(c.spread)))
-	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) > 0 then abs(round((a.game_score_home - a.game_score_away) - c.spread)) 
+	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) > 0 then abs(round((a.game_score_home - a.game_score_away) - c.spread))
 	 when home_ml < away_ml and (a.game_score_home - a.game_score_away) < 0 then abs(round(abs((a.game_score_home - a.game_score_away)) - c.spread)) end
 	 as spread_diff,
 round((a.game_score_away + a.game_score_home),2) as pred_total,

@@ -1,3 +1,4 @@
+-- CREATE TABLE NCAAB_OU_DAILY_ANALYSIS AS 
 with past_games as (
 	select *, 
 	row_number() over (partition by away_team, home_team, date(date_upd) order by date_upd desc) as rnk
@@ -108,35 +109,28 @@ and c.spread is not null
 and p.winner is not null
 and source = 'auto'
 
+), ou_agg as (
+	select 
+	game_date,
+	total_diff,
+	count(*) as allGames,
+	-- sum(case when spreadOutcome=SpreadDecision then 1 else 0 end)/cast(count(*) as float) as spread_pct,
+	sum(case when overUnderPred=over_UnderActual then 1 else 0 end) as ou_correct,
+	sum(case when overUnderPred=over_UnderActual then 1 else 0 end)/cast(Count(*) as float) as ou_pct
+	-- avg(predML)
+	 from outcome
+	where date("date") >= '2023-11-16'
+	 group by 1,2
 )
 
 select 
--- away_team, 
--- away_ml,
--- home_team, 
--- home_ml,
--- t1propt,
--- t2propt,
--- t1pts,
--- t2pts,
--- spread,
--- spreadDecision,
--- SpreadOutcome,
--- pred_spread,
--- actualSpread,
--- overUnderPred,
--- Over_underActual,
--- line,
--- pred_total,
--- actualtotal,
--- case when SpreadOutcome = SpreadDecision then 1 else 0 end as accurate_spread,
--- case when overUnderPred = over_underActual then 1 else 0 end as accurate_over
+-- *
+game_date, 
 total_diff,
-count(*) as allGames,
-sum(case when spreadOutcome=SpreadDecision then 1 else 0 end)/cast(count(*) as float) as spread_pct,
-sum(case when overUnderPred=over_UnderActual then 1 else 0 end)/cast(Count(*) as float) as ou_pct
--- avg(predML)
- from outcome
-where date("date") >= '2023-11-16'
- group by 1
+sum(allgames) over (partition by total_diff order by game_date) as cumu_games,
+sum(ou_correct) over (partition by total_diff order by game_date) as cumu_correct
+
+from ou_agg
+group by 1,2
+order by 1,2
 ;

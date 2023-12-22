@@ -1,3 +1,4 @@
+-- CREATE TABLE NCAAB_SPREAD_DAILY_ANALYSIS AS 
 with past_games as (
 	select *, 
 	row_number() over (partition by away_team, home_team, date(date_upd) order by date_upd desc) as rnk
@@ -32,10 +33,10 @@ case when home_ml < away_ml and (a.game_score_home - a.game_score_away)> 0 then 
 	 when away_ml < home_ml and (a.game_score_home - a.game_score_away) > 0 then abs(round((a.game_score_home - a.game_score_away) - c.spread)) 
 	 when home_ml < away_ml and (a.game_score_home - a.game_score_away) < 0 then abs(round(abs((a.game_score_home - a.game_score_away)) - c.spread)) end
 	 as spread_diff,
-round((a.game_score_home + a.game_score_away),2) as pred_total,
+round((a.game_score_home - a.game_score_away),2) as pred_total,
 c.line,
 round(p.t2pts + p.t1pts) as actualTotal,
-round((a.game_score_home + a.game_score_away) - c.line) as total_diff,
+abs(round((a.game_score_home + a.game_score_away) - c.line)) as total_diff,
 home_record,
 away_record,
 c.home_ml,
@@ -89,7 +90,7 @@ case when home_ml < away_ml and (a.game_score_home - a.game_score_away)> 0 then 
 round((a.game_score_away + a.game_score_home),2) as pred_total,
 c.line,
 round(t2pts + t1pts) as actualTotal,
-round((a.game_score_home + a.game_score_away) - c.line) as total_diff,
+abs(round((a.game_score_home + a.game_score_away) - c.line)) as total_diff,
 home_record,
 away_record,
 c.home_ml,
@@ -108,35 +109,28 @@ and c.spread is not null
 and p.winner is not null
 and source = 'auto'
 
+), spread_agg as (
+	select 
+	game_date,
+	spread_diff,
+	count(*) as allGames,
+	-- sum(case when spreadOutcome=SpreadDecision then 1 else 0 end)/cast(count(*) as float) as spread_pct,
+	sum(case when spreadOutcome=SpreadDecision then 1 else 0 end) as spread_correct,
+	sum(case when spreadOutcome=SpreadDecision then 1 else 0 end)/cast(Count(*) as float) as spread_pct
+	-- avg(predML)
+	 from outcome
+	where date("date") >= '2023-11-16'
+	 group by 1,2
 )
 
 select 
--- away_team, 
--- away_ml,
--- home_team, 
--- home_ml,
--- t1propt,
--- t2propt,
--- t1pts,
--- t2pts,
--- spread,
--- spreadDecision,
--- SpreadOutcome,
--- pred_spread,
--- actualSpread,
--- overUnderPred,
--- Over_underActual,
--- line,
--- pred_total,
--- actualtotal,
--- case when SpreadOutcome = SpreadDecision then 1 else 0 end as accurate_spread,
--- case when overUnderPred = over_underActual then 1 else 0 end as accurate_over
-total_diff,
-count(*) as allGames,
-sum(case when spreadOutcome=SpreadDecision then 1 else 0 end)/cast(count(*) as float) as spread_pct,
-sum(case when overUnderPred=over_UnderActual then 1 else 0 end)/cast(Count(*) as float) as ou_pct
--- avg(predML)
- from outcome
-where date("date") >= '2023-11-16'
- group by 1
+-- *
+game_date, 
+spread_diff,
+sum(allgames) over (partition by spread_diff order by game_date) as cumu_games,
+sum(spread_correct) over (partition by spread_diff order by game_date) as cumu_correct
+
+from spread_agg
+group by 1,2
+order by 1,2
 ;

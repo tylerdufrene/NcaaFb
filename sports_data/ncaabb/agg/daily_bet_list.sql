@@ -14,12 +14,12 @@ round(a.spread,2) as pred_spread,
 c.spread,
 case when home_ml < away_ml and a.spread > 0 then abs(round(a.spread - abs(c.spread)))
 	 when away_ml < home_ml and a.spread < 0 then abs(round(abs(a.spread) - abs(c.spread)))
-	 when away_ml < home_ml and a.spread > 0 then abs(round(a.spread - c.spread)) 
+	 when away_ml < home_ml and a.spread > 0 then abs(round(a.spread - c.spread))
 	 when home_ml < away_ml and a.spread < 0 then abs(round(abs(a.spread) - c.spread)) end
 	 as spread_diff,
 round(a.game_score_total,2) as pred_total,
 c.line,
-abs(round(a.game_score_total - c.line)) as total_diff,
+round(a.game_score_total - c.line) as total_diff,
 home_record,
 away_record,
 c.home_ml,
@@ -53,12 +53,12 @@ round(a.spread,2) as pred_spread,
 c.spread,
 case when home_ml < away_ml and a.spread > 0 then abs(round(a.spread - abs(c.spread)))
 	 when away_ml < home_ml and a.spread < 0 then abs(round(abs(a.spread) - abs(c.spread)))
-	 when away_ml < home_ml and a.spread > 0 then abs(round(a.spread - c.spread)) 
+	 when away_ml < home_ml and a.spread > 0 then abs(round(a.spread - c.spread))
 	 when home_ml < away_ml and a.spread < 0 then abs(round(abs(a.spread) - c.spread)) end
 	 as spread_diff,
 round(a.game_score_total,2) as pred_total,
 c.line,
-abs(round(a.game_score_total - c.line)) as total_diff,
+round(a.game_score_total - c.line) as total_diff,
 home_record,
 away_record,
 c.home_ml,
@@ -92,12 +92,12 @@ round(a.spread,2) as pred_spread,
 c.spread,
 case when away_ml < home_ml and a.spread > 0 then abs(round(a.spread - abs(c.spread)))
 	 when home_ml < away_ml and a.spread < 0 then abs(round(abs(a.spread) - abs(c.spread)))
-	 when home_ml < away_ml and a.spread > 0 then abs(round(a.spread - c.spread)) 
+	 when home_ml < away_ml and a.spread > 0 then abs(round(a.spread - c.spread))
 	 when away_ml < home_ml and a.spread < 0 then abs(round(abs(a.spread) - c.spread)) end
 	 as spread_diff,
 round(a.game_score_total,2) as pred_total,
 c.line,
-abs(round(a.game_score_total - c.line)) as total_diff,
+round(a.game_score_total - c.line) as total_diff,
 away_record,
 home_record,
 c.away_ml,
